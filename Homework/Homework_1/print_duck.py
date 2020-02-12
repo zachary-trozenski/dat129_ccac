@@ -29,18 +29,17 @@ def list_maker(file_text):
     ten lists into a new icon_list that is returned for use elsewhere.
     """
     text_list = list(file_text)
-    list_1 = text_list[0:10]
-    list_2 = text_list[10:20]
-    list_3 = text_list[20:30]
-    list_4 = text_list[30:40]
-    list_5 = text_list[40:50]
-    list_6 = text_list[50:60]
-    list_7 = text_list[60:70]
-    list_8 = text_list[70:80]
-    list_9 = text_list[80:90]
-    list_10 = text_list[90:100]
-    icon_list = [list_1, list_2, list_3, list_4, list_5, list_6, list_7, list_8,
-        list_9, list_10]
+    icon_list = []
+    icon_list.append(text_list[0:10])
+    icon_list.append(text_list[10:20])
+    icon_list.append(text_list[20:30])
+    icon_list.append(text_list[30:40])
+    icon_list.append(text_list[40:50])
+    icon_list.append(text_list[50:60])
+    icon_list.append(text_list[60:70])
+    icon_list.append(text_list[70:80])
+    icon_list.append(text_list[80:90])
+    icon_list.append(text_list[90:100])
     return icon_list
 
 def replace_values(values, empty_character, shaded_character):
