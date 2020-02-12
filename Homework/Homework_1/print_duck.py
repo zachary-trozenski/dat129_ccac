@@ -2,92 +2,177 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Feb  2 10:34:10 2020
-
 @author: zachary.trozenski
 DAT-129: Spring 2020
-Homework 1: Icon Assignement
+Homework 2: Modularity and Icon Assignement
+Modified by Joel Whiteman - 2/10/2020
 """
 
-# Initialize the list containing lists of each icon line in binary
-binary_icon = [['0','0','0','1','1','1','0','0','0','0'],
-                ['0','0','1','0','0','0','1','0','0','0'],
-                ['0','1','0','0','1','0','1','0','0','0'],
-                ['1','1','0','0','0','0','1','0','1','0'],
-                ['0','1','0','0','0','0','0','1','0','1'],
-                ['0','0','1','0','0','0','0','0','0','1'],
-                ['0','0','1','0','0','0','0','0','1','0'],
-                ['0','0','1','0','0','0','0','0','1','0'],
-                ['0','0','0','1','0','0','0','1','0','0'],
-                ['0','0','0','1','1','1','1','0','0','0']]
+import os
 
-def replace_values(values):
+def file_reader(filepath):
+    """Opens a text file and reads the contents into a string variable.
+
+    This file opens the file at the user-inputted filepath and reads it into the 
+    file_text string variable. It returns the file_text variable for use elsewhere.
     """
-    Take the iterated list elements and replace the values '1' and '0' with
-    '@' and ' ' respectively and print the iterated elements.
+    with open(filepath, "r") as file_reader:
+        file_text = file_reader.read()
+    return file_text
+
+def list_maker(file_text):
+    """Takes the file's encoded icon text and turns it into a list of lists.
+
+    This function takes the string contents of the user's icon text input file. First,
+    it casts that string into a list of the 100 characters in the file. Then it slices 
+    the list into individual lists of ten characters a piece, and adds the resulting 
+    ten lists into a new icon_list that is returned for use elsewhere.
     """
-    if '1' in values:
-        print(str(values.replace('1','@')), end=' ')
+    text_list = list(file_text)
+    list_1 = text_list[0:10]
+    list_2 = text_list[10:20]
+    list_3 = text_list[20:30]
+    list_4 = text_list[30:40]
+    list_5 = text_list[40:50]
+    list_6 = text_list[50:60]
+    list_7 = text_list[60:70]
+    list_8 = text_list[70:80]
+    list_9 = text_list[80:90]
+    list_10 = text_list[90:100]
+    icon_list = [list_1, list_2, list_3, list_4, list_5, list_6, list_7, list_8,
+        list_9, list_10]
+    return icon_list
+
+def replace_values(values, empty_character, shaded_character):
+    """
+    Take the iterated list elements and replace the shaded_character and
+    empty_character values and replace them with '@' and ' ' respectively.
+    After replacement, print the iterated elements.
+    """
+    if shaded_character in values:
+        print(str(values.replace(shaded_character,'@')), end=' ')
     else:
-        print(str(values.replace('0',' ')), end=' ')
+        print(str(values.replace(empty_character,' ')), end=' ')
 
-
-def pretty_print_the_binary(any_list):
+def pretty_print_the_binary(icon_list, empty_character, shaded_character):
     """
     Take the binary list of lists, where each list within the large list
     is one line of the 10x10 grid and return a picture of a duck 
     with binary replace by '@' and ' '
     """
-    for pieces in any_list:
-        for things in pieces:
-            replace_values(things)
+    for rows in icon_list:
+        for values in rows:
+            replace_values(values, empty_character, shaded_character)
         print("\n", end='')
+    print('\n')
 
-def print_icon_backwards(big_list):
+def print_icon_backwards(icon_list, empty_character, shaded_character):
     """
     Take the binary list of lists, where each list within the large list
     is one line of the 10x10 grid and return a backwards picture of a duck 
     with binary replace by '@' and ' '
     """
-    for lines in big_list[:]:
-        for figures in lines[::-1]:
-            replace_values(figures)
+    for rows in icon_list[:]:
+        for values in rows[::-1]:
+            replace_values(values, empty_character, shaded_character)
         print("\n", end='')
+    print('\n')
 
-def print_icon_upside_down(my_list):
+def print_icon_upside_down(icon_list, empty_character, shaded_character):
     """
     Take the binary list of lists, where each list within the large list
     is one line of the 10x10 grid and return an upside down picture of a duck 
     with binary replace by '@' and ' '
     """
-    for rows in my_list[::-1]:
-        for elements in rows[::]:
-            replace_values(elements)
+    for rows in icon_list[::-1]:
+        for values in rows[::]:
+            replace_values(values, empty_character, shaded_character)
         print('\n', end='')
+    print('\n')
+    
+def filepath_menu():
+    """Allows the user to input a filepath name.
+    
+    This function displays a menu question that allows the user to enter a string
+    containing the name of a file they'd like to read for icon data. It also checks 
+    that the filename string they've entered actually exists in the current directory.
+    If it does not, they are asked to enter a different string. It then returns the 
+    validated filepath for use elsewhere.
+    """
+    filepath = ""
+    while filepath == "":
+        filepath = input("Please input the name of the text file containing your " + 
+            "icon code.\n")
+        filepath_exists = os.path.isfile(filepath)
+        if not filepath_exists:
+            print("\nThat file doesn't appear to exist in this directory!\n")
+            filepath = ""
+    return filepath
+
+def character_menu():
+    """Allows the user to input the characters that represent shaded and empty cells.
+    
+    This function asks the user to define the characters in their text file that
+    represent shaded and empty cells in the icon. It runs the character_validator
+    function on the characters they enter and then returns the validated variables for
+    use elswhere. 
+    """
+    empty_character = ""
+    shaded_character = ""
+    while empty_character == "":
+        empty_character = input("\nIn your text file, which character represents " +
+            "an empty cell?\n")
+        empty_character = character_validator(empty_character)
+    while shaded_character == "":
+        shaded_character = input("\nIn your text file, which character represents " +
+            "a shaded cell?\n")
+        shaded_character = character_validator(shaded_character)
+    return empty_character, shaded_character
+
+def character_validator(character):
+    """Validates that user input is only of one character in length.
+
+    This function checks a user-inputted string to ensure that it is only one
+    character long. If it is longer or shorter, it prints a message and sets the
+    validated character variable to be empty. If the character string is of one 
+    character in length and is valid, it sets the validated character varible
+    to be equal to the original string. It returns the validated character variable
+    for use elsewhere.
+    """
+    if len(character) > 1:
+        print("\nThat's too many characters!")
+        validated_character = ""
+    elif len(character) == 0:
+        print("Please enter a valid character.")
+        validated_character = ""
+    else:
+        validated_character = character
+    return validated_character
+
+def user_menu():
+    """Displays a menu to the user and records their input.
+
+    This function controls the user input to the program. It calls other functions
+    to get the filepath string, the empty character, and the shaded character. It 
+    then returns these varaibles for use elsewhere. 
+    """
+    filepath = filepath_menu()
+    empty_character, shaded_character = character_menu()
+    return filepath, empty_character, shaded_character
 
 def main():
+    filepath, empty_character, shaded_character = user_menu()
+    file_text = file_reader(filepath)
+    icon_list = list_maker(file_text)
+    
     # Print the picture with new symbol instead of binary
-    pretty_print_the_binary(binary_icon)
-    print()
+    pretty_print_the_binary(icon_list, empty_character, shaded_character)
     
     # Print the icon backwards
-    print_icon_backwards(binary_icon)
-    print()
-    
+    print_icon_backwards(icon_list, empty_character, shaded_character)
+
     # Print the icon upside down
-    print_icon_upside_down(binary_icon)
-    print()
+    print_icon_upside_down(icon_list, empty_character, shaded_character)
 
 if __name__ == "__main__":
     main()
-    
-# SCRATCH
-# def print_nice_list(better_list):
-# """
-# Input: List of lists in binary
-# Output: Concatenated list formatted without syntax marking
-# """
-# for series in better_list[:]:
-#     for char in series:
-#        print(char, end=' ')
-#     printed_list = print("\n", end='')
-# return printed_list    
