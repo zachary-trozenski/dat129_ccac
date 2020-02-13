@@ -24,9 +24,9 @@ def list_maker(file_text):
     """Takes the file's encoded icon text and turns it into a list of lists.
 
     This function takes the string contents of the user's icon text input file. First,
-    it casts that string into a list of the 100 characters in the file. Then it slices 
+    it casts that string into a list of all the characters in the file. Then it slices 
     the list into individual lists of ten characters a piece, and adds the resulting 
-    ten lists into a new icon_list that is returned for use elsewhere.
+    n lists into a new icon_list that is returned for use elsewhere.
     """
     text_list = list(file_text)
     icon_list = []
