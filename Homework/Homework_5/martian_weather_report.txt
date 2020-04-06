@@ -1,0 +1,6 @@
+The amount of sols you queried from the Curiosity data was: 30
+The average high temperature (in Celsius): -13.466666666666667
+The average low temperature (in Celsius): -74.16666666666667
+High temperature extreme (in Celsius): -7
+Low temperature extreme (in Celsius): -79
+Most common atmospheric conditions: Sunny
