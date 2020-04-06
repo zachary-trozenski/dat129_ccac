@@ -1,0 +1,192 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\"\"\"\n",
+    "Refactored web scraper script with shiny new feature.\n",
+    "\n",
+    "Site I'm using to scrape:\n",
+    "https://www.imdb.com/chart/top/?ref_=nv_mv_250\n",
+    "\n",
+    "Research question:\n",
+    "The 1970's is often lauded as producing some of the most critically\n",
+    "acclaimed films in cinematic history. However, how many of IMDB's Top\n",
+    "250 films are actually from the 70's and what is the proportion of the whole?\n",
+    "If not the seventies, then which decade is the most \"critically acclaimed\"?\n",
+    "\n",
+    "- using matplotlib\n",
+    "    - %matplotlib inline (for jupiter notebooks)\n",
+    "\n",
+    "\"\"\"\n",
+    "# Import statements\n",
+    "\n",
+    "from bs4 import BeautifulSoup\n",
+    "import json\n",
+    "import urllib.request\n",
+    "import matplotlib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def get_html_text(url):\n",
+    "    \"\"\"\n",
+    "    Function takes a URL and grabs the HTML from the internet\n",
+    "    \"\"\"\n",
+    "    # build request object\n",
+    "    request = urllib.request.Request(url)\n",
+    "    # access network via standard gateway\n",
+    "    # to retrieve HTML from the IMDB server\n",
+    "    with urllib.request.urlopen(request) as reply:\n",
+    "        return reply.read()\n",
+    "\n",
+    "def clean_movie_years(dictionary):\n",
+    "    \"\"\"\n",
+    "    iterate over each of the raw release years in the movie_years list\n",
+    "    and slice the list elements so only the digits are extracted\n",
+    "    \"\"\"\n",
+    "    for films in dictionary[\"movie_years\"]:\n",
+    "        dictionary[\"clean_years\"].append(int(films[1:5]))\n",
+    "\n",
+    "\n",
+    "def sort_movie_years(clean_dictionary, final_dictionary):\n",
+    "    \"\"\"\n",
+    "    iterate over the list of cleaned release years in clean_years and\n",
+    "    sort them into lists representing each decade from 1920 to 2019\n",
+    "    \"\"\"\n",
+    "    for flicks in clean_dictionary[\"clean_years\"]:\n",
+    "        if flicks in range(1920,1930):\n",
+    "            final_dictionary[\"twenties_films\"].append(flicks)\n",
+    "        if flicks in range(1930,1940):\n",
+    "            final_dictionary[\"thirties_films\"].append(flicks)\n",
+    "        if flicks in range(1940,1950):\n",
+    "            final_dictionary[\"forties_films\"].append(flicks)\n",
+    "        if flicks in range(1950,1960):\n",
+    "            final_dictionary[\"fifties_films\"].append(flicks)\n",
+    "        if flicks in range(1960,1970):\n",
+    "            final_dictionary[\"sixties_films\"].append(flicks)\n",
+    "        if flicks in range(1970,1980):\n",
+    "            final_dictionary[\"seventies_films\"].append(flicks)\n",
+    "        if flicks in range(1980,1990):\n",
+    "            final_dictionary[\"eighties_films\"].append(flicks)\n",
+    "        if flicks in range(1990,2000):\n",
+    "            final_dictionary[\"nineties_films\"].append(flicks)\n",
+    "        if flicks in range(2000,2010):\n",
+    "            final_dictionary[\"aughts_films\"].append(flicks)\n",
+    "        if flicks in range(2010,2020):\n",
+    "            final_dictionary[\"teens_films\"].append(flicks)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[2.8000000000000003, 2.4, 4.3999999999999995, 9.6, 7.199999999999999, 6.800000000000001, 12.0, 16.0, 19.2, 19.6]\n"
+     ]
+    }
+   ],
+   "source": [
+    "def main():\n",
+    "    # Initialize URL to scrape, cleaning_dictionary, decade_dictionary \n",
+    "    url = \"https://www.imdb.com/chart/top/?ref_=nv_mv_250\"\n",
+    "    \n",
+    "    cleaning_dict = {\n",
+    "    \"movie_years\" : [],\n",
+    "    \"clean_years\" : [],\n",
+    "    }\n",
+    "\n",
+    "    decade_dict = {\n",
+    "    \"twenties_films\" : [],\n",
+    "    \"thirties_films\" : [],\n",
+    "    \"forties_films\" : [],\n",
+    "    \"fifties_films\" :[],\n",
+    "    \"sixties_films\" : [],\n",
+    "    \"seventies_films\" : [],\n",
+    "    \"eighties_films\" : [],\n",
+    "    \"nineties_films\" : [],\n",
+    "    \"aughts_films\" : [],\n",
+    "    \"teens_films\" : []\n",
+    "    }\n",
+    "    \n",
+    "    # Get the HTML\n",
+    "    imdb_html = get_html_text(url)\n",
+    "    # Pass raw HTML and desired parser to beautiful soup\n",
+    "    soup = BeautifulSoup(imdb_html, 'html.parser')\n",
+    "    # Pull section of HTML containing movie titles out of the soup and store in a variable\n",
+    "    movie_titles = soup.find_all('td', 'titleColumn')\n",
+    "    # From the subsection of HTML extract only the movies' release years\n",
+    "    for movies in movie_titles:\n",
+    "        year = movies.find('span').string\n",
+    "        cleaning_dict[\"movie_years\"].append(year)\n",
+    "    # Clean the data so that it is only represented as an integer\n",
+    "    clean_years = clean_movie_years(cleaning_dict)\n",
+    "    # Sort the release years into keys that correspond to the decade in which they were released\n",
+    "    sorted_movies = sort_movie_years(cleaning_dict, decade_dict)\n",
+    "    \n",
+    "    # intialize additional variables to conduct calculations\n",
+    "    total_films = 250\n",
+    "    proportions = []\n",
+    "\n",
+    "    # calculate the proportions for each decade and store them in a list\n",
+    "    for decade, years in decade_dict.items():\n",
+    "        proportions.append((len(years)/total_films) * 100)\n",
+    "\n",
+    "    print(proportions)\n",
+    "    \n",
+    "    \n",
+    "if __name__ == \"__main__\":\n",
+    "    main()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
