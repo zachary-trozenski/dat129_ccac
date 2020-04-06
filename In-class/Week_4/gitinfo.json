@@ -1,0 +1,5 @@
+{
+  "Branching": ["branch", "checkout"],
+  "Remote": ["remoate add" , "pull", "push" , "fetch"],
+  "Commits": ["add", "commit", "checkout"]
+}
